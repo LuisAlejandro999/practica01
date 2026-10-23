@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Catálogo de suculentas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<header th:replace="~{fragmentos/plantilla :: encabezado}"></header>
+
+<main class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h2 mb-1">Catálogo de suculentas</h1>
+            <p class="text-muted mb-0">Consulta y administra las suculentas registradas.</p>
+        </div>
+        <a class="btn btn-success" th:href="@{/suculentas/nueva}">+ Registrar suculenta</a>
+    </div>
+
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div th:if="${#lists.isEmpty(suculentas)}" class="alert alert-info">
+        Todavía no hay suculentas registradas. Usa “Registrar suculenta” para agregar la primera.
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-md-6 col-xl-4" th:each="s : ${suculentas}">
+            <div class="card h-100 shadow-sm">
+                <img th:src="${s.rutaImagen}" class="card-img-top" alt="Imagen de suculenta"
+                     style="height:220px; object-fit:cover;"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/e8f5e9/2e7d32?text=Suculenta';">
+                <div class="card-body">
+                    <h2 class="h5 card-title" th:text="${s.nombreComun}"></h2>
+                    <p class="text-muted fst-italic mb-3" th:text="${s.nombreCientifico}"></p>
+                    <dl class="row mb-0">
+                        <dt class="col-6">Familia</dt>
+                        <dd class="col-6" th:text="${s.familia}"></dd>
+                        <dt class="col-6">Color</dt>
+                        <dd class="col-6" th:text="${s.colorPrincipal}"></dd>
+                        <dt class="col-6">Altura</dt>
+                        <dd class="col-6"><span th:text="${s.alturaCm}"></span> cm</dd>
+                        <dt class="col-6">Riego</dt>
+                        <dd class="col-6" th:text="${s.nivelRiego}"></dd>
+                        <dt class="col-6">Precio estimado</dt>
+                        <dd class="col-6">₡<span th:text="${#numbers.formatDecimal(s.precioEstimado, 1, 2)}"></span></dd>
+                    </dl>
+                </div>
+                <div class="card-footer bg-white d-flex gap-2">
+                    <a class="btn btn-outline-primary btn-sm flex-fill"
+                       th:href="@{/suculentas/editar/{id}(id=${s.idSuculenta})}">Editar</a>
+                    <form th:action="@{/suculentas/eliminar/{id}(id=${s.idSuculenta})}" method="post"
+                          class="flex-fill"
+                          onsubmit="return confirm('¿Seguro que desea eliminar esta suculenta?');">
+                        <button class="btn btn-outline-danger btn-sm w-100" type="submit">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragmentos/plantilla :: pie}"></footer>
+</body>
+</html>
